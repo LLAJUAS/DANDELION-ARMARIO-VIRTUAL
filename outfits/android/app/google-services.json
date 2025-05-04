@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "152177659528",
+    "project_id": "ropa-bb88f",
+    "storage_bucket": "ropa-bb88f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152177659528:android:d124dedc9f249bf39dd93d",
+        "android_client_info": {
+          "package_name": "com.example.outfits"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqBIfiyCM_JEthh60PRfBePq3BprFMfEk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
