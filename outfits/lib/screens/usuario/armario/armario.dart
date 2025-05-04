@@ -1,37 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:outfits/screens/usuario/armario/prendas/agregar.dart';
+import 'package:outfits/theme/armario_theme.dart';
+import 'package:outfits/LOGIN/models/user_model.dart'; // Importa el modelo Usuario
 
 class Armario extends StatelessWidget {
-  const Armario({super.key});
+  final Usuario usuario; // Agrega un parámetro para el usuario
+
+  const Armario({super.key, required this.usuario}); // Constructor actualizado
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: ArmarioTheme.backgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView( 
+        child: SingleChildScrollView(
           child: Column(
             children: [
-             
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color.fromARGB(186, 217, 74, 100),
-              const Color.fromARGB(164, 242, 135, 41),
-            ],
-          ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
+                decoration: ArmarioTheme.headerDecoration,
                 child: Column(
                   children: [
-                    // Profile section
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Row(
@@ -56,19 +45,13 @@ class Armario extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              const Text(
-                                "Alejandra",
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Text(
+                                usuario.id, // Muestra el nombre del usuario
+                                style: ArmarioTheme.profileNameTextStyle,
                               ),
-                              const Text(
-                                "@llajuas",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
+                              Text(
+                                "@${usuario.email.split('@')[0]}", // Muestra el nombre de usuario basado en el email
+                                style: ArmarioTheme.profileUsernameTextStyle,
                               ),
                             ],
                           ),
@@ -77,8 +60,7 @@ class Armario extends StatelessWidget {
                             icon: const Icon(Icons.more_vert, size: 24),
                             onSelected: (value) {
                               if (value == 'logout') {
-                                // Implementar la lógica de cerrar sesión
-                                Navigator.of(context).pushReplacementNamed('/login'); // Redirige a la pantalla de inicio de sesión
+                                Navigator.of(context).pushReplacementNamed('/login');
                               }
                             },
                             itemBuilder: (BuildContext context) => [
@@ -91,8 +73,6 @@ class Armario extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    // Icons row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -106,16 +86,8 @@ class Armario extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Stats section
               Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
+                decoration: ArmarioTheme.statsContainerDecoration,
                 child: Column(
                   children: [
                     Padding(
@@ -131,7 +103,7 @@ class Armario extends StatelessWidget {
                     ),
                     Container(
                       height: 1,
-                      color: Colors.grey[300],
+                      color: ArmarioTheme.dividerColor,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -147,22 +119,19 @@ class Armario extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Clothing grid
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: GridView.count(
-                  shrinkWrap: true, // <-- Important to allow GridView to fit within the scroll
-                  physics: const NeverScrollableScrollPhysics(), // <-- Prevent internal scrolling
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   childAspectRatio: 0.75,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
                   children: [
-                    _buildClothingItem("https://via.placeholder.com/200x300/123456", "Dress"),
-                    _buildClothingItem("https://via.placeholder.com/200x300/662244", "Jacket"),
+                    _buildClothingItem("https://plus.unsplash.com/premium_photo-1664304951108-c04911c42fbd?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "Dress"),
+                    _buildClothingItem("https://plus.unsplash.com/premium_photo-1664304951108-c04911c42fbd?q=80&w=1073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "Jacket"),
                   ],
                 ),
               ),
@@ -170,20 +139,20 @@ class Armario extends StatelessWidget {
           ),
         ),
       ),
-    floatingActionButton: FloatingActionButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AgregarPrendaFoto()),
-    );
-  },
-  backgroundColor: Colors.cyan,
-  child: const Icon(Icons.add, color: Colors.black),
-),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AgregarPrendaFoto()),
+          );
+        },
+        backgroundColor: Colors.cyan,
+        child: const Icon(Icons.add, color: Colors.black),
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
+        type: ArmarioTheme.bottomNavigationBarTheme.type,
+        selectedItemColor: ArmarioTheme.bottomNavigationBarTheme.selectedItemColor,
+        unselectedItemColor: ArmarioTheme.bottomNavigationBarTheme.unselectedItemColor,
         currentIndex: 3,
         items: const [
           BottomNavigationBarItem(
@@ -210,10 +179,7 @@ class Armario extends StatelessWidget {
   Widget _buildIconButton(IconData icon) {
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-      ),
+      decoration: ArmarioTheme.iconButtonDecoration,
       child: Icon(icon, size: 24),
     );
   }
@@ -223,17 +189,11 @@ class Armario extends StatelessWidget {
       children: [
         Text(
           count,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: ArmarioTheme.statCountTextStyle,
         ),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.black87,
-          ),
+          style: ArmarioTheme.statLabelTextStyle,
         ),
       ],
     );
@@ -244,18 +204,10 @@ class Armario extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isSelected ? Colors.green : Colors.transparent,
-              width: 2,
-            ),
-          ),
+          decoration: ArmarioTheme.filterCategoryDecoration(isSelected),
           child: CircleAvatar(
             radius: 28,
             backgroundColor: Colors.grey[200],
-            // Using placeholder for now, you should replace with your actual assets
-            // child: Image.asset(imagePath, width: 30, height: 30),
             child: Icon(isSelected ? Icons.access_alarm : Icons.add, size: 24),
           ),
         ),
@@ -274,10 +226,7 @@ class Armario extends StatelessWidget {
 
   Widget _buildClothingItem(String imageUrl, String type) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: ArmarioTheme.clothingItemDecoration,
       child: Stack(
         children: [
           Positioned.fill(
@@ -294,10 +243,7 @@ class Armario extends StatelessWidget {
             left: 8,
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.white54,
-                shape: BoxShape.circle,
-              ),
+              decoration: ArmarioTheme.clothingActionDecoration,
               child: const Icon(Icons.visibility, size: 20),
             ),
           ),
@@ -306,10 +252,7 @@ class Armario extends StatelessWidget {
             right: 8,
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.white54,
-                shape: BoxShape.circle,
-              ),
+              decoration: ArmarioTheme.clothingActionDecoration,
               child: const Icon(Icons.favorite_border, size: 20),
             ),
           ),

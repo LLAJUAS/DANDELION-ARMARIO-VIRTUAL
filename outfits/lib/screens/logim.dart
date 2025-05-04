@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:outfits/screens/registro.dart';
 import '../LOGIN/services/firestore_service.dart';
+import 'package:outfits/LOGIN/models/user_model.dart'; // Importa el modelo Usuario
+import 'package:outfits/screens/usuario/armario/armario.dart'; // Importa el widget Armario
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -30,27 +32,27 @@ class _LoginScreenState extends State<Login> {
       String email = _emailController.text.trim();
       String password = _passwordController.text.trim();
 
-      var user = await _firestoreService.iniciarSesion(email, password);
-      if (user != null) {
-        String role = user['role']; // Obtener el rol del usuario
-        
-        // Mostrar mensaje de bienvenida según el rol
+      var userData = await _firestoreService.iniciarSesion(email, password);
+      if (userData != null) {
+        Usuario usuario = Usuario(
+          id: userData['nombre'], // Usa el nombre como ID
+          email: userData['email'],
+          password: userData['password'],
+        );
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(role == 'admin' 
-              ? 'Bienvenido Administrador' 
-              : 'Bienvenido Usuario'),
+            content: Text('Bienvenido ${usuario.id}'),
             backgroundColor: Colors.green,
           ),
         );
-        
-        
-        // Redirigir al home correspondiente
-        if (role == 'admin') {
-          Navigator.pushNamedAndRemoveUntil(context, 'prueba', (route) => false);
-        } else {
-          Navigator.pushNamedAndRemoveUntil(context, 'armario', (route) => false);
-        }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Armario(usuario: usuario), // Pasa el usuario
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -83,30 +85,31 @@ class _LoginScreenState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color.fromARGB(186, 217, 74, 100),
-              const Color.fromARGB(164, 242, 135, 41),
-            ],
+      body: Stack(
+        children: [
+          // Fondo de pantalla con imagen
+          Positioned.fill(
+            child: Image.asset(
+              'assets/fondo.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Form(
-                key: _formKey,
+          
+          // Overlay semi-transparente
+          Positioned.fill(
+            child: Container(
+              color: const Color.fromARGB(0, 0, 0, 0).withOpacity(0.4),
+            ),
+          ),
+          
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Botón de retroceso y título
+                    // Botón de retroceso y logo
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: Row(
@@ -122,14 +125,11 @@ class _LoginScreenState extends State<Login> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Text(
-                            'Dandelion',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.2,
-                            ),
+                          Image.asset(
+                            'assets/logo.png',
+                            width: 70,
+                            height: 35,
+                            fit: BoxFit.contain,
                           ),
                         ],
                       ),
@@ -137,244 +137,274 @@ class _LoginScreenState extends State<Login> {
                     
                     const SizedBox(height: 40),
                     
-                    // Título principal
-                    Text(
-                      'Hola de nuevo!',
-                      style: GoogleFonts.robotoMono(
-                        color: Colors.white,
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        height: 1.2,
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 40),
-                    
-                    // Campo Email
-                    _buildInputField(
-                      controller: _emailController,
-                      label: 'Email',
-                      icon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu email';
-                        }
-                        if (!value.contains('@') || !value.contains('.')) {
-                          return 'Ingresa un email válido';
-                        }
-                        return null;
-                      },
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Campo Contraseña
-                    _buildInputField(
-                      controller: _passwordController,
-                      label: 'Contraseña',
-                      icon: Icons.lock_outline,
-                      obscureText: _obscurePassword,
-                      toggleObscure: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu contraseña';
-                        }
-                        if (value.length < 6) {
-                          return 'La contraseña debe tener al menos 6 caracteres';
-                        }
-                        return null;
-                      },
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Enlace "Olvidé mi contraseña"
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          // Navegar a pantalla de recuperación de contraseña
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white70,
-                        ),
-                        child: Text(
-                          '¿Olvidaste tu contraseña?',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 40),
-                    
-                    // Botón de Inicio de Sesión
+                    // Contenedor principal centrado
                     Container(
                       width: double.infinity,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFD94A64).withOpacity(0.5),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 32.0,
                       ),
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD94A64),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(0, 0, 0, 0).withOpacity(0),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Título principal
+                            Text(
+                              '¡Bienvenido de nuevo!',
+                              style: GoogleFonts.robotoMono(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              height: 1.2,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Estamos felices de verte, inicia sesión a continuación',
+                              style:  GoogleFonts.montserrat(
+                              color: Colors.white70,
+                              fontSize: 13,
+                              height: 1.2,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            
+                            const SizedBox(height: 40),
+                            
+                            // Campo Email
+                            _buildInputField(
+                              controller: _emailController,
+                              label: 'Email',
+                              icon: Icons.email_outlined,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor ingresa tu email';
+                                }
+                                if (!value.contains('@') || !value.contains('.')) {
+                                  return 'Ingresa un email válido';
+                                }
+                                return null;
+                              },
+                            ),
+                            
+                            const SizedBox(height: 24),
+                            
+                            // Campo Contraseña
+                            _buildInputField(
+                              controller: _passwordController,
+                              label: 'Contraseña',
+                              icon: Icons.lock_outline,
+                              obscureText: _obscurePassword,
+                              toggleObscure: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor ingresa tu contraseña';
+                                }
+                                if (value.length < 6) {
+                                  return 'La contraseña debe tener al menos 6 caracteres';
+                                }
+                                return null;
+                              },
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // Enlace "Olvidé mi contraseña"
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  // Navegar a pantalla de recuperación de contraseña
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white70,
                                 ),
-                              )
-                            : Text(
-                                'INICIAR SESIÓN',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5,
+                                child: Text(
+                                  '¿Olvidaste tu contraseña?',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 20),
-                    
-                    // Divider con texto "O"
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.white.withOpacity(0.3),
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'O',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white70,
-                              fontSize: 14,
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.white.withOpacity(0.3),
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    
-                    const SizedBox(height: 20),
-                    
-                    // Botón de Google (solo visual)
-                    Container(
-                      width: double.infinity,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Inicio con Google pendiente'),
-                              backgroundColor: Colors.blue,
+                            
+                            const SizedBox(height: 40),
+                            
+                            // Botón de Inicio de Sesión
+                            Container(
+                              width: double.infinity,
+                              height: 55,
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFD94A64).withOpacity(0.5),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _login,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFD94A64),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(
+                                        'INICIAR SESIÓN',
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                              ),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black87,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/google.png',
-                              height: 24,
-                              width: 24,
+                            
+                            const SizedBox(height: 20),
+                            
+                            // Divider con texto "O"
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.white.withOpacity(0.3),
+                                    thickness: 1,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Text(
+                                    'O',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.white.withOpacity(0.3),
+                                    thickness: 1,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'Continuar con Google',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                            
+                            const SizedBox(height: 20),
+                            
+                            // Botón de Google
+                            Container(
+                              width: double.infinity,
+                              height: 55,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Inicio con Google pendiente'),
+                                      backgroundColor: Colors.blue,
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black87,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/google.png',
+                                      height: 24,
+                                      width: 24,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Continuar con Google',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 24),
+                            
+                            // Enlace a Registro
+                            TextButton(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Registro()),
+                              ),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white70,
+                              ),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: '¿Nuevo aquí? ',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'Regístrate',
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: const Color(0xFFD94A64),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Enlace a Registro
-                    Center(
-                      child: TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Registro()),
-                        ),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white70,
-                        ),
-                        child: RichText(
-                          text: TextSpan(
-                            text: '¿No tienes cuenta? ',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: 'Regístrate',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: const Color(0xFFD94A64),
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ),
@@ -385,7 +415,7 @@ class _LoginScreenState extends State<Login> {
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

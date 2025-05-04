@@ -63,24 +63,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Tu contenido
+          // Contenido principal
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Center(
-                    child: Text(
-                      'Dandelion',
-                      style: GoogleFonts.fascinate(
-                        textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                        ),
-                      ),
-                    ),
+                // Logo en lugar del texto "Dandelion"
+                Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    width: 100, // Ajusta según el tamaño deseado
+                    height: 50, // Ajusta según el tamaño deseado
+                    fit: BoxFit.contain,
                   ),
                 ),
                 const Spacer(),

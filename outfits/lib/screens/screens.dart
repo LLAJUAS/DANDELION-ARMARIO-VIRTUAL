@@ -6,3 +6,4 @@ export 'package:outfits/screens/usuario/prueba.dart';
 export 'package:outfits/screens/usuario/armario/armario.dart';
 export 'package:outfits/screens/usuario/armario/prendas/agregar.dart';
 export 'package:outfits/screens/usuario/armario/prendas/datos_prenda.dart';
+export 'package:outfits/screens/splash_video_screen.dart';

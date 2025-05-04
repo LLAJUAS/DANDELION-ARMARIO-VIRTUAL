@@ -7,13 +7,13 @@ class Usuario {
 
   factory Usuario.fromMap(Map<String, dynamic> data, String documentId) {
     return Usuario(
-      id: documentId,
+      id: data['nombre'] ?? '', // Usa el campo 'nombre'
       email: data['email'] ?? '',
       password: data['password'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'email': email, 'password': password};
+    return {'nombre': id, 'email': email, 'password': password};
   }
 }

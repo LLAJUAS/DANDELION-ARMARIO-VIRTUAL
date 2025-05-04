@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +9,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 
 class AgregarPrendaFoto extends StatefulWidget {
-  const AgregarPrendaFoto({Key? key}) : super(key: key);
+  const AgregarPrendaFoto({super.key});
 
   @override
   State<AgregarPrendaFoto> createState() => _AgregarPrendaFotoState();
@@ -17,8 +17,8 @@ class AgregarPrendaFoto extends StatefulWidget {
 
 class _AgregarPrendaFotoState extends State<AgregarPrendaFoto> {
   final ImagePicker _picker = ImagePicker();
-  List<XFile> _imagenesOriginales = [];
-  List<Uint8List> _imagenesProcesadas = [];
+  final List<XFile> _imagenesOriginales = [];
+  final List<Uint8List> _imagenesProcesadas = [];
   bool _procesando = false;
   String _error = '';
 
@@ -70,7 +70,7 @@ class _AgregarPrendaFotoState extends State<AgregarPrendaFoto> {
 
   Future<void> _seleccionarImagenesGaleria() async {
     try {
-      final List<XFile>? imagenesSeleccionadas = await _picker.pickMultiImage();
+      final List<XFile> imagenesSeleccionadas = await _picker.pickMultiImage();
       if (imagenesSeleccionadas != null && imagenesSeleccionadas.isNotEmpty) {
         setState(() {
           _procesando = true;

@@ -5,17 +5,17 @@ import 'dart:typed_data';
 class DatosPrenda extends StatefulWidget {
   final List<Uint8List> imagenes;
 
-  const DatosPrenda({Key? key, required this.imagenes}) : super(key: key);
+  const DatosPrenda({super.key, required this.imagenes});
 
   @override
   State<DatosPrenda> createState() => _AgregarPrendaState();
 }
 
 class _AgregarPrendaState extends State<DatosPrenda> {
-  String _selectedCategory = 'Vaqueros > Tiro alto';
-  List<String> _selectedColors = ['AZUL'];
-  List<String> _selectedTags = ['LONGITUD TOTAL', 'SENCILLA'];
-  String _brand = '';
+  final String _selectedCategory = 'Vaqueros > Tiro alto';
+  final List<String> _selectedColors = ['AZUL'];
+  final List<String> _selectedTags = ['LONGITUD TOTAL', 'SENCILLA'];
+  final String _brand = '';
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class _AgregarPrendaState extends State<DatosPrenda> {
                   // Imagen central
                   if (widget.imagenes.isNotEmpty)
                     Center(
-                      child: Container(
+                      child: SizedBox(
                         height: 300,
                         child: FadeInImage(
                           placeholder: MemoryImage(kTransparentImage),

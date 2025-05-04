@@ -29,15 +29,14 @@ class FirestoreService {
     String email,
     String password,
   ) async {
-    final querySnapshot =
-        await _usuarios
-            .where('email', isEqualTo: email)
-            .where('password', isEqualTo: password)
-            .get();
+    final querySnapshot = await _usuarios
+        .where('email', isEqualTo: email)
+        .where('password', isEqualTo: password)
+        .get();
 
     if (querySnapshot.docs.isNotEmpty) {
       var userDoc = querySnapshot.docs.first;
-      return userDoc.data() as Map<String, dynamic>;
+      return userDoc.data() as Map<String, dynamic>; // Incluye el campo 'nombre'
     }
     return null; // Si no se encuentra el usuario
   }

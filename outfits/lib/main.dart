@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:outfits/routes/app_routes.dart';
-import 'package:outfits/screens/screens.dart';
+
 
 
 void main() async {
@@ -24,10 +24,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.initialRoute, // Esto seguirá dirigiendo al home como antes
+      initialRoute: AppRoutes.initialRoute, 
       routes: AppRoutes.getAppRoutes(),
       onGenerateRoute: AppRoutes.onGenerateRoute,
-      // Opcional: puedes agregar la página de login como una ruta nombrada en tu AppRoutes
+      
     );
   }
 }
