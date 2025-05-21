@@ -105,13 +105,18 @@ class _LoginScreenState extends State<Login> {
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  children: [
+             child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
                     // Botón de retroceso y logo
                     Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
+                      padding: const EdgeInsets.only(top: 20.0, left: 16.0),
+                      
                       child: Row(
                         children: [
                           Container(

@@ -79,7 +79,7 @@ class ArmarioTheme {
 
   static BottomNavigationBarThemeData bottomNavigationBarTheme = const BottomNavigationBarThemeData(
     type: BottomNavigationBarType.fixed,
-    selectedItemColor: Colors.blue,
+    selectedItemColor: Color(0xFFD94A64),
     unselectedItemColor: Colors.grey,
   );
 }

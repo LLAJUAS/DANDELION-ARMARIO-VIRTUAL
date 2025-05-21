@@ -24,6 +24,17 @@ dependencies:
   http: ^1.1.0  # Actualizado a la versión más reciente compatible
   http_parser: ^4.0.2
   animated_splash_screen: ^1.3.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+  uuid: ^4.2.2
+  flutter_dotenv: ^5.0.2      
+  cloudinary_flutter: ^1.3.0
+  cloudinary_url_gen: ^1.7.0
+
+  
+  
+  
+
 
  
 
@@ -39,3 +50,10 @@ flutter:
     - assets/google.png
     - assets/logo.png
     - assets/fondo.jpg
+    - assets/ROPA/1.png
+    - assets/ROPA/2.png
+    - assets/ROPA/3.png
+    - assets/ROPA/4.png
+    - assets/ROPA/5.png
+    - assets/ROPA/6.png
+    - .env

@@ -11,10 +11,9 @@ class AppRoutes {
       'home': (_) => HomeScreen(),
       'registro': (_) => Registro(),
       'login': (_) => Login(),
-      'prueba': (context) => PruebaScreen(),
-      
       'agregar': (context) => AgregarPrendaFoto(),
       'datosprenda': (context) => DatosPrenda(imagenes: []),
+      
       
     };
   }

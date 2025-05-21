@@ -1,12 +1,9 @@
-
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:outfits/screens/screens.dart';
 import 'package:transparent_image/transparent_image.dart';
-
 
 class AgregarPrendaFoto extends StatefulWidget {
   const AgregarPrendaFoto({super.key});
@@ -23,7 +20,7 @@ class _AgregarPrendaFotoState extends State<AgregarPrendaFoto> {
   String _error = '';
 
   // Configura tu API key de Remove.bg aquí
-  static const String REMOVE_BG_API_KEY = '29Pg3PzksCe8TwGFwB5aLxPA';
+  static const String REMOVE_BG_API_KEY = 'EDRy5cpWj4d4hcfw1BrULGWX';
   static const String REMOVE_BG_API_URL = 'https://api.remove.bg/v1.0/removebg';
 
   Future<void> _mostrarPopupPermiso({
@@ -139,14 +136,9 @@ class _AgregarPrendaFotoState extends State<AgregarPrendaFoto> {
           _imagenesProcesadas.add(pngBytes);
         });
 
-        // Redirigir cuando todas las imágenes estén procesadas
-        if (_imagenesProcesadas.length == _imagenesOriginales.length) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DatosPrenda(imagenes: _imagenesProcesadas),
-            ),
-          );
+        // Redirigir con la primera imagen procesada
+        if (_imagenesProcesadas.isNotEmpty) {
+          Navigator.of(context).pop(_imagenesProcesadas.first);
         }
       } else {
         final errorBody = await response.stream.bytesToString();
@@ -157,6 +149,8 @@ class _AgregarPrendaFotoState extends State<AgregarPrendaFoto> {
         _error = 'Error al procesar imagen: ${e.toString()}';
       });
       debugPrint('Error en Remove.bg: $e');
+      // Devuelve null si hay error
+      Navigator.of(context).pop();
     }
   }
 
@@ -179,7 +173,7 @@ class _AgregarPrendaFotoState extends State<AgregarPrendaFoto> {
       appBar: AppBar(
         title: const Text('Agregar prendas'),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
